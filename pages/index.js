@@ -9,6 +9,9 @@ function Index() {
         <Link href="/about">
           <a>Go to About Me</a>
         </Link>
+        <Link href="/add-user">
+          <a>Go to Add User</a>
+        </Link>
       </section>
     </main>
   );
