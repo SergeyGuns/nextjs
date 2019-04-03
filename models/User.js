@@ -4,26 +4,25 @@ class User extends Sequelize.Model {}
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: './db/database.sqlite',
+  storage: './db/database.sqlite'
 })
 
 User.init(
-  'users',
   {
     username: {
       type: Sequelize.STRING,
       unique: true,
-      allowNull: false,
+      allowNull: false
     },
     email: {
       type: Sequelize.STRING,
       unique: true,
-      allowNull: false,
+      allowNull: false
     },
     password: {
       type: Sequelize.STRING,
-      allowNull: false,
-    },
+      allowNull: false
+    }
   },
   {
     sequelize,
@@ -31,16 +30,13 @@ User.init(
       beforeCreate: user => {
         const salt = bcrypt.genSaltSync()
         user.password = bcrypt.hashSync(user.password, salt)
-      },
-    },
-    instanceMethods: {
-      validPassword: function(password) {
-        return bcrypt.compareSync(password, this.password)
-      },
-    },
-  },
+      }
+    }
+  }
 )
-
+User.prototype.validPassword = function(password) {
+  return bcrypt.compareSync(password, this.password)
+}
 // create all the defined tables in the specified database.
 User.sync()
   .then(() => console.log("users table has been successfully created, if one doesn't exist"))
