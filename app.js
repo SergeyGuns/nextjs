@@ -13,7 +13,8 @@ server.use(bodyParser.urlencoded())
 server.use(cookieParser())
 server.use(logErrors)
 server.use(clientErrorHandler)
-
+server.set('view engine', 'pug')
+server.set('views', __dirname + '/pug')
 server.use(
   cookieSession({
     key: 'user_sid',
@@ -98,6 +99,13 @@ server.get('/logout', (req, res) => {
   } else {
     res.redirect('/login')
   }
+})
+
+server.get('/user-list', (req, res) => {
+  User.findAll().then(users => {
+    // projects will be an array of all Project instances
+    res.render('user-list', { users })
+  })
 })
 
 // route for handling 404 requests(unavailable routes)
