@@ -3,8 +3,8 @@ const express = require('express')
 const server = express()
 const next = require('next')
 const bodyParser = require('body-parser')
-const port = parseInt(process.env.PORT, 10) || 3000
-const dev = process.env.NODE_ENV !== 'production'
+const port = parseInt(global.process.env.PORT, 10) || 3000
+const dev = global.process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const morgan = require('morgan')
 const handle = app.getRequestHandler()
@@ -35,17 +35,18 @@ app.prepare().then(() => {
       resave: false,
       saveUninitialized: false,
       cookie: {
-        expires: 600000,
-      },
-    }),
+        expires: 600000
+      }
+    })
   )
+
   server.use((req, res, next) => {
     if (req.cookies.user_sid && !req.session.user) {
       res.clearCookie('user_sid')
     }
     next()
   })
-  server.post('/auth', (req, res) => {})
+  // server.post('/auth', (req, res) => {})
 
   server.get('/API', (req, res) => {
     const parsedUrl = parse(req.url, true)
@@ -58,27 +59,27 @@ app.prepare().then(() => {
   server
     .route('/signup')
     .get(sessionChecker, (req, res) => {
-      res.sendFile(__dirname + '/public/signup.html')
+      res.sendFile(global.__dirname + '/public/signup.html')
     })
     .post((req, res) => {
-      console.log(req.body)
+      global.console.log(req.body)
       User.create({
         username: req.body.username,
         email: req.body.email,
-        password: req.body.password,
+        password: req.body.password
       })
         .then(user => {
           req.session.user = user.dataValues
           res.redirect('/dashboard')
         })
-        .catch(error => {
+        .catch(() => {
           res.redirect('/signup')
         })
     })
   server
     .route('/login')
     .get(sessionChecker, (req, res) => {
-      res.sendFile(__dirname + '/public/login.html')
+      res.sendFile(global.__dirname + '/public/login.html')
     })
     .post((req, res) => {
       var username = req.body.username,
@@ -97,7 +98,7 @@ app.prepare().then(() => {
     })
   server.get('/dashboard', (req, res) => {
     if (req.session.user && req.cookies.user_sid) {
-      res.sendFile(__dirname + '/public/dashboard.html')
+      res.sendFile(global.__dirname + '/public/dashboard.html')
     } else {
       res.redirect('/login')
     }
@@ -114,7 +115,7 @@ app.prepare().then(() => {
   })
 
   // route for handling 404 requests(unavailable routes)
-  server.use(function(req, res, next) {
+  server.use(function(req, res) {
     res.status(404).send("Sorry can't find that!")
   })
 
@@ -124,6 +125,6 @@ app.prepare().then(() => {
 
   server.listen(port, err => {
     if (err) throw err
-    console.log(`> Ready on http://localhost:${port}`)
+    global.console.log(`> Ready on http://localhost:${port}`)
   })
 })
