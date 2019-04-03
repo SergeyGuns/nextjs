@@ -8,7 +8,6 @@ const cookieSession = require('cookie-session')
 const cookieParser = require('cookie-parser')
 const User = require('./models/User')
 const { logErrors, clientErrorHandler, errorHandler, sessionChecker } = require('./utils')
-console.dir(User)
 server.use(bodyParser.json())
 server.use(bodyParser.urlencoded())
 server.use(cookieParser())
@@ -73,7 +72,6 @@ server
       password = req.body.password
 
     User.findOne({ where: { username: username } }).then(function(user) {
-      console.dir(user)
       if (!user) {
         res.redirect('/login')
       } else if (!user.validPassword(password)) {
