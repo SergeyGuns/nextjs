@@ -6,8 +6,7 @@ const port = parseInt(global.process.env.PORT, 10) || 8080
 const { APIHandler } = require('./modules/API')
 const cookieSession = require('cookie-session')
 const cookieParser = require('cookie-parser')
-const User = require('./models/User')
-const UserGroups = require('./models/UserGroups')
+const { UserGroup, User } = require('./models')
 const { logErrors, clientErrorHandler, errorHandler, sessionChecker } = require('./utils')
 server.use(bodyParser.json())
 server.use(bodyParser.urlencoded())
@@ -50,9 +49,8 @@ server
     res.render('signup')
   })
   .post((req, res) => {
-    global.console.log('post::signup:: ', req.body)
     User.create({
-      username: req.body.username,
+      user: req.body.name,
       email: req.body.email,
       password: req.body.password
     })
@@ -73,7 +71,7 @@ server
     var username = req.body.username,
       password = req.body.password
 
-    User.findOne({ where: { username: username } }).then(function(user) {
+    User.findOne({ where: { name: username } }).then(function(user) {
       if (!user) {
         res.redirect('/login')
       } else if (!user.validPassword(password)) {
@@ -86,7 +84,7 @@ server
   })
 server.get('/dashboard', (req, res) => {
   if (req.session.user && req.cookies.user_sid) {
-    res.render('dashboard', { userName: req.session.user.username })
+    res.render('dashboard', { userName: req.session.user.name })
   } else {
     res.redirect('/login')
   }
@@ -102,11 +100,16 @@ server.get('/logout', (req, res) => {
   }
 })
 
-server.get('/user-list', (req, res) => {
-  User.findAll().then(users => {
-    // projects will be an array of all Project instances
-    res.render('user-list', { users })
-  })
+server.get('/db-list', (req, res) => {
+  User.findAll()
+    .then(users => ({ users }))
+    .then(result => UserGroup.findAll().then(groups => ({ ...result, groups })))
+    .then(result =>
+      res.render('db-list', {
+        users: users.map(u => JSON.stringify(u, null, ' ')),
+        groups: groups.map(g => JSON.stringify(g, null, ' '))
+      })
+    )
 })
 
 server.get('/user-groups', (req, res) => {})

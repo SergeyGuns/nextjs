@@ -1,0 +1,18 @@
+html
+  include ./layout/head
+  body
+  include ./layout/nav
+  
+  h3 Users
+  each user in users
+    p=user
+
+  h3 Groups
+  each group in groups
+    p=group
+
+  h3 UserGroupLinks
+  each link in usergrouplinks
+    p=link
+ 
+
