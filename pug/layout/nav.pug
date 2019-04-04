@@ -1,0 +1,18 @@
+- var authorised = userName
+nav.navbar.navbar-default
+  .container-fluid
+    #bs-example-navbar-collapse-1.collapse.navbar-collapse
+      ul.nav.navbar-nav
+        li
+          a(href='/') Home
+        if !authorised 
+          li
+            a(href='/signup') Sign Up
+        li
+          a(href='/dashboard') Dashboard
+      ul.nav.navbar-nav.navbar-right
+        if !authorised
+          li
+            a(href='/login') Log In
+        li
+          a(href='/logout') Log Out

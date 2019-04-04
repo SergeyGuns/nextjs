@@ -7,6 +7,7 @@ const { APIHandler } = require('./modules/API')
 const cookieSession = require('cookie-session')
 const cookieParser = require('cookie-parser')
 const User = require('./models/User')
+const UserGroups = require('./models/UserGroups')
 const { logErrors, clientErrorHandler, errorHandler, sessionChecker } = require('./utils')
 server.use(bodyParser.json())
 server.use(bodyParser.urlencoded())
@@ -46,7 +47,7 @@ server.get('/', sessionChecker, (req, res) => {
 server
   .route('/signup')
   .get(sessionChecker, (req, res) => {
-    res.sendFile(__dirname + '/public/signup.html')
+    res.render('signup')
   })
   .post((req, res) => {
     global.console.log('post::signup:: ', req.body)
@@ -66,7 +67,7 @@ server
 server
   .route('/login')
   .get(sessionChecker, (req, res) => {
-    res.sendFile(__dirname + '/public/login.html')
+    res.render('login')
   })
   .post((req, res) => {
     var username = req.body.username,
@@ -85,7 +86,7 @@ server
   })
 server.get('/dashboard', (req, res) => {
   if (req.session.user && req.cookies.user_sid) {
-    res.sendFile(__dirname + '/public/dashboard.html')
+    res.render('dashboard', { userName: req.session.user.username })
   } else {
     res.redirect('/login')
   }
@@ -107,6 +108,8 @@ server.get('/user-list', (req, res) => {
     res.render('user-list', { users })
   })
 })
+
+server.get('/user-groups', (req, res) => {})
 
 // route for handling 404 requests(unavailable routes)
 server.use(function(req, res) {

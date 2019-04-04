@@ -1,0 +1,20 @@
+html
+  include ./layout/head
+  body
+    .page-header
+      h1 Simple Auth-System
+    include ./layout/nav
+    .container.row
+      .jumbotron.col-sm-4.pull-center
+        form(action='/signup', method='post')
+          div
+            label Username:
+            input(type='text', name='username')
+          div
+            label Email:
+            input(type='text', name='email')
+          div
+            label Password:
+            input(type='password', name='password')
+          div
+            input.btn.btn-primary(type='submit', value='Sign Up')

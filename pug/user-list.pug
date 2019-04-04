@@ -1,3 +1,9 @@
+body
+  include ./layout/head
+
 ul
   each user in users
-    li user
+    li
+      span=user.username
+      span=user.email
+      span=user.password
