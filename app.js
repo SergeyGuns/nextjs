@@ -106,8 +106,8 @@ server.get('/db-list', (req, res) => {
     .then(result => UserGroup.findAll().then(groups => ({ ...result, groups })))
     .then(result =>
       res.render('db-list', {
-        users: users.map(u => JSON.stringify(u, null, ' ')),
-        groups: groups.map(g => JSON.stringify(g, null, ' '))
+        users: result.users.map(u => JSON.stringify(u, null, ' ')),
+        groups: result.groups.map(g => JSON.stringify(g, null, ' '))
       })
     )
 })

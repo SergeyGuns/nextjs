@@ -6,17 +6,18 @@ const salt = bcrypt.genSaltSync()
 
 // Assiciations
 
-User.belongsToMany(UserGroup, {
-  as: 'Groups',
-  through: 'UserGroupLinks',
-  foreignKey: User.id
-})
+// User.belongsToMany(UserGroup, {
+//   as: 'Groups',
+//   through: 'UserGroupLinks',
+//   foreignKey: User.id
+// })
+UserGroup.hasMany(User)
 // User.belongsToMany(UserGroup, {
 //   through: 'UserGroups'
 // })
 // create all the defined tables in the specified database.
 sequelize
-  .sync({ farce: true })
+  .sync({ force: true })
   .then(() => console.log("users table has been successfully created, if one doesn't exist"))
   .then(() => UserGroup.findOrCreate({ where: { name: 'Green Team' } }))
   .then(() => UserGroup.findOrCreate({ where: { name: 'Blue Team' } }))
@@ -37,8 +38,8 @@ sequelize
       }
     }).then(user => {
       console.dir(user)
-      UserGroup.findOne({ where: { name: 'Green Team' } }).then(group => {
-        user.addGroups(group.dataValues.id)
+      UserGroup.findAll().then(groups => {
+        groups.map(group => group.addUser(user.dataValues.id))
       })
     })
   )
