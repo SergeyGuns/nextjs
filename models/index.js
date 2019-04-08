@@ -39,7 +39,7 @@ sequelize
     }).then(user => {
       console.dir(user)
       UserGroup.findAll().then(groups => {
-        groups.map(group => group.addUser(user.dataValues.id))
+        Promise.all(groups.map(group => group.addUser(user)))
       })
     })
   )

@@ -102,14 +102,20 @@ server.get('/logout', (req, res) => {
 
 server.get('/db-list', (req, res) => {
   User.findAll()
-    .then(users => ({ users }))
-    .then(result => UserGroup.findAll().then(groups => ({ ...result, groups })))
-    .then(result =>
+    .then(users => users)
+    .then(users => UserGroup.findAll().then(groups => ({ users, groups })))
+    .then(result => {
+      result.groups.map(async (group, i) => {
+        console.log('GROUP ::: ', group)
+        group.users = await group.getUsers().then(u => u)
+      })
+    })
+    .then(result => {
       res.render('db-list', {
         users: result.users.map(u => JSON.stringify(u, null, ' ')),
         groups: result.groups.map(g => JSON.stringify(g, null, ' '))
       })
-    )
+    })
 })
 
 server.get('/user-groups', (req, res) => {})
