@@ -6,22 +6,7 @@ const Presentation = require('./Presentation')(sequelize)
 const bcrypt = require('bcrypt')
 const salt = bcrypt.genSaltSync()
 
-// Assiciations
-
-// User.belongsToMany(UserGroup, {
-//   as: 'Groups',
-//   through: 'UserGroupLinks',
-//   foreignKey: User.id
-// })
-// UserGroup.hasMany(User)
-// User.belongsToMany(UserGroup, {
-//   through: 'UserGroups'
-// })
-// create all the defined tables in the specified database.
-
-// User.hasMany(UserGroup) // Will add userId to Task model
-// Will also add userId to Task model
-
+//Links
 UserGroup.belongsToMany(User, { through: 'UserGroupLink' })
 User.belongsToMany(UserGroup, { through: 'UserGroupLink' })
 Presentation.belongsToMany(UserGroup, { through: 'PresentationUserGroupLink' })
