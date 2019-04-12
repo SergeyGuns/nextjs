@@ -6,7 +6,7 @@ const port = parseInt(global.process.env.PORT, 10) || 8080
 const { APIHandler } = require('./modules/API')
 const cookieSession = require('cookie-session')
 const cookieParser = require('cookie-parser')
-const { UserGroup, User } = require('./models')
+const { UserGroup, User, UserGroupLink } = require('./models')
 const { logErrors, clientErrorHandler, errorHandler, sessionChecker } = require('./utils')
 server.use(bodyParser.json())
 server.use(bodyParser.urlencoded())
@@ -104,16 +104,12 @@ server.get('/db-list', (req, res) => {
   User.findAll()
     .then(users => users)
     .then(users => UserGroup.findAll().then(groups => ({ users, groups })))
-    .then(result => {
-      result.groups.map(async (group, i) => {
-        console.log('GROUP ::: ', group)
-        group.users = await group.getUsers().then(u => u)
-      })
-    })
+    .then(result => UserGroupLink.findAll().then(links => ({ ...result, links })))
     .then(result => {
       res.render('db-list', {
         users: result.users.map(u => JSON.stringify(u, null, ' ')),
-        groups: result.groups.map(g => JSON.stringify(g, null, ' '))
+        groups: result.groups.map(g => JSON.stringify(g, null, ' ')),
+        links: result.links.map(g => JSON.stringify(g, null, ' '))
       })
     })
 })
