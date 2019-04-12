@@ -2,12 +2,15 @@ const { parse } = require('url')
 const express = require('express')
 const server = express()
 const bodyParser = require('body-parser')
-const port = parseInt(global.process.env.PORT, 10) || 8080
+const port = parseInt(global.process.env.PORT, 10) || 3000
 const { APIHandler } = require('./modules/API')
 const cookieSession = require('cookie-session')
 const cookieParser = require('cookie-parser')
-const { UserGroup, User, UserGroupLink } = require('./models')
+const multer = require('multer')
+const { UserGroup, User, UserGroupLink, Presentation } = require('./models')
 const { logErrors, clientErrorHandler, errorHandler, sessionChecker } = require('./utils')
+const storage = require('./storage')(multer)
+
 server.use(bodyParser.json())
 server.use(bodyParser.urlencoded())
 server.use(cookieParser())
@@ -35,6 +38,15 @@ server.use((req, res, next) => {
 })
 // server.post('/auth', (req, res) => {})
 
+server.get('/upload', (req, res) => {
+  res.render('upload')
+})
+
+server.post('/upload', multer({ storage }).single('file'), async (req, res) => {
+  const filePath = `${req.file.destination}/${req.file.filename}`
+  await Presentation.create({ filePath })
+})
+
 server.get('/API', (req, res) => {
   const parsedUrl = parse(req.url, true)
   return APIHandler(req, res, parsedUrl)
@@ -43,6 +55,7 @@ server.get('/API', (req, res) => {
 server.get('/', sessionChecker, (req, res) => {
   res.redirect('/login')
 })
+
 server
   .route('/signup')
   .get(sessionChecker, (req, res) => {
@@ -105,10 +118,12 @@ server.get('/db-list', (req, res) => {
     .then(users => users)
     .then(users => UserGroup.findAll().then(groups => ({ users, groups })))
     .then(result => UserGroupLink.findAll().then(links => ({ ...result, links })))
+    .then(result => Presentation.findAll().then(pres => ({ ...result, pres })))
     .then(result => {
       res.render('db-list', {
         users: result.users.map(u => JSON.stringify(u, null, ' ')),
         groups: result.groups.map(g => JSON.stringify(g, null, ' ')),
+        pres: result.pres.map(g => JSON.stringify(g, null, ' ')),
         links: result.links.map(g => JSON.stringify(g, null, ' '))
       })
     })
