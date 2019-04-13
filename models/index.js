@@ -47,22 +47,18 @@ sequelize
       where: {
         name: 'admin'
       }
-    }).then(user => {
-      UserGroup.findAll().then(groups => {
-        Promise.all(groups.map(group => user.addUserGroup(group)))
-      })
-    })
+    }).then(user =>
+      UserGroup.findAll().then(groups => Promise.all(groups.map(group => user.addUserGroup(group))))
+    )
   )
   .then(() =>
     User.findOne({
       where: {
         name: 'serg'
       }
-    }).then(user => {
-      UserGroup.findAll().then(groups => {
-        Promise.all(groups.map(group => user.addUserGroup(group)))
-      })
-    })
+    }).then(user =>
+      UserGroup.findAll().then(groups => Promise.all(groups.map(group => user.addUserGroup(group))))
+    )
   )
   .catch(error => console.log('This error occured', error))
 

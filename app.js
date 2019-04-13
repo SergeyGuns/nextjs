@@ -2,7 +2,7 @@ const { parse } = require('url')
 const express = require('express')
 const server = express()
 const bodyParser = require('body-parser')
-const port = parseInt(global.process.env.PORT, 10) || 3000
+const port = parseInt(global.process.env.PORT, 10) || 3001
 const { APIHandler } = require('./modules/API')
 const cookieSession = require('cookie-session')
 const cookieParser = require('cookie-parser')
@@ -47,10 +47,10 @@ server.post('/upload', multer({ storage }).single('file'), async (req, res) => {
   await Presentation.create({ filePath })
 })
 
-server.get('/API', (req, res) => {
-  const parsedUrl = parse(req.url, true)
-  return APIHandler(req, res, parsedUrl)
-})
+// server.get('/API', (req, res) => {
+//   const parsedUrl = parse(req.url, true)
+//   return APIHandler(req, res, parsedUrl)
+// })
 
 server.get('/', sessionChecker, (req, res) => {
   res.redirect('/login')
@@ -120,6 +120,10 @@ server.get('/db-list', (req, res) => {
     .then(result => UserGroupLink.findAll().then(links => ({ ...result, links })))
     .then(result => Presentation.findAll().then(pres => ({ ...result, pres })))
     .then(result => {
+      result.groups.map(group => group.getUsers().then(users => console.dir(users)))
+      return result
+    })
+    .then(result => {
       res.render('db-list', {
         users: result.users.map(u => JSON.stringify(u, null, ' ')),
         groups: result.groups.map(g => JSON.stringify(g, null, ' ')),
@@ -130,6 +134,39 @@ server.get('/db-list', (req, res) => {
 })
 
 server.get('/user-groups', (req, res) => {})
+
+const models = {
+  user: User,
+  'user-group': UserGroup
+}
+
+server.get('/api/:model/:id', (req, res, next) => {
+  console.log(req.params)
+  models[req.params.model]
+    .findAll(req.params.id === 'all' ? {} : { where: { id: req.params.id } })
+    .then(result => {
+      console.log(result)
+      res.json(result)
+    })
+})
+
+// server.get( '/student/:student_id/course/:course_id/subject/:subjectId', function(req, res, next) {
+//   Subjects.find({
+//       where: {
+//           'id': req.params.subjectId,
+//           'courses.id': req.params.course_id,
+//           'student_id.id': req.params.student_id
+//       },
+//       include: [{
+//           model: Courses,
+//           include: [{
+//               model: Student
+//           }]
+//       }]
+//   }).success(function(results) {
+//       console.log(results);
+//   });
+// });
 
 // route for handling 404 requests(unavailable routes)
 server.use(function(req, res) {
