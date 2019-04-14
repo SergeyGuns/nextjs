@@ -3,7 +3,6 @@ const express = require('express')
 const server = express()
 const bodyParser = require('body-parser')
 const port = parseInt(global.process.env.PORT, 10) || 3001
-const { APIHandler } = require('./modules/API')
 const cookieSession = require('cookie-session')
 const cookieParser = require('cookie-parser')
 const multer = require('multer')
@@ -134,21 +133,23 @@ server.get('/db-list', (req, res) => {
 })
 
 server.get('/user-groups', (req, res) => {})
+// /api/*** */
+require('./routes/api')(server, User, UserGroup)
+require('./routes/graphql/graphql')(server, User)
+// const models = {
+//   user: User,
+//   'user-group': UserGroup
+// }
 
-const models = {
-  user: User,
-  'user-group': UserGroup
-}
-
-server.get('/api/:model/:id', (req, res, next) => {
-  console.log(req.params)
-  models[req.params.model]
-    .findAll(req.params.id === 'all' ? {} : { where: { id: req.params.id } })
-    .then(result => {
-      console.log(result)
-      res.json(result)
-    })
-})
+// server.get('/api/:model/:id', (req, res, next) => {
+//   console.log(req.params)
+//   models[req.params.model]
+//     .findAll(req.params.id === 'all' ? {} : { where: { id: req.params.id } })
+//     .then(result => {
+//       console.log(result)
+//       res.json(result)
+//     })
+// })
 
 // server.get( '/student/:student_id/course/:course_id/subject/:subjectId', function(req, res, next) {
 //   Subjects.find({
