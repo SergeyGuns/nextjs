@@ -11,7 +11,8 @@ const { logErrors, clientErrorHandler, errorHandler, sessionChecker } = require(
 const storage = require('./storage')(multer)
 
 /*
- * @todo Нужно добавить схемы User UserGroup по https://docs.swagger.io/spec.html#5-schema
+ * @todo Нужно добавить схемы User UserGroup
+ * @body Нужно добавить схемы User UserGroup по https://docs.swagger.io/spec.html#5-schema
  */
 
 server.use(bodyParser.json())
