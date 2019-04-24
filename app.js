@@ -10,6 +10,10 @@ const { UserGroup, User, UserGroupLink, Presentation } = require('./models')
 const { logErrors, clientErrorHandler, errorHandler, sessionChecker } = require('./utils')
 const storage = require('./storage')(multer)
 
+/*
+ * @todo Нужно добавить схемы User UserGroup по https://docs.swagger.io/spec.html#5-schema
+ */
+
 server.use(bodyParser.json())
 server.use(bodyParser.urlencoded())
 server.use(cookieParser())
