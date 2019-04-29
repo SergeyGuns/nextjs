@@ -1,0 +1,20 @@
+html 
+  include ./layout/head
+  body
+    style
+    .jumbotron.col-12.pull-center
+      form(action="/api/add/user" id='adduser' method="post")
+        div
+          label Name :
+          input(type='text' requred)
+        div
+          label Email :
+          input(type='text' requred)
+        div
+          label Pass :
+          input(type='password' requred)
+        div
+          label Password re-try :
+          input(type='password' requred) 
+        div
+          input.btn.btn-primary(type='submit', value='Registrate')

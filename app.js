@@ -99,9 +99,27 @@ server
       }
     })
   })
+
 server.get('/dashboard', (req, res) => {
   if (req.session.user && req.cookies.user_sid) {
     res.render('dashboard', { userName: req.session.user.name })
+  } else {
+    res.redirect('/login')
+  }
+})
+
+server.get('/add-user', (req, res) => {
+  if (req.session.user && req.cookies.user_sid) {
+    res.render('add-user')
+  } else {
+    res.redirect('/login')
+  }
+})
+
+server.post('/api/add/user', (req, res) => {
+  if (req.session.user && req.cookies.user_sid) {
+    console.log(req.body)
+    // User.find({where: ''})
   } else {
     res.redirect('/login')
   }

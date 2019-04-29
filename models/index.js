@@ -27,7 +27,7 @@ sequelize
       where: {
         name: 'admin',
         email: 'admin',
-        password: bcrypt.hashSync('admin', salt),
+        password: 'admin',
         isAdmin: true
       }
     })
@@ -37,7 +37,7 @@ sequelize
       where: {
         name: 'serg',
         email: 'serg',
-        password: bcrypt.hashSync('serg', salt),
+        password: 'serg',
         isAdmin: true
       }
     })
