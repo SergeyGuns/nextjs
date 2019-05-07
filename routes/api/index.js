@@ -1,5 +1,5 @@
-import swaggerUi from 'swagger-ui-express'
-import swaggerDocument from './swagger.json'
+const swaggerUi = require('swagger-ui-express')
+const swaggerDocument = require('./swagger.json')
 
 module.exports = (server, User, UserGroup) => {
   const models = {
@@ -7,7 +7,7 @@ module.exports = (server, User, UserGroup) => {
     'user-group': UserGroup
   }
 
-  server.use('/api-docs', swaggerUi.serve, swaggerUi(swaggerDocument))
+  // server.use('/api-docs', swaggerUi.serve, swaggerUi(swaggerDocument))
 
   server.get('/api/:model/:id', (req, res) => {
     console.log(req.params)
@@ -19,8 +19,26 @@ module.exports = (server, User, UserGroup) => {
       })
   })
 
-  server.put('/api/:model/:name', (req, res) => {
-    models[req.params.model].findOrCreate({ where: { name } }).then(result => res.send(result))
+  // server.put('/api/:model/', (req, res) => {
+  //   models[req.params.model].findOrCreate({ where: { name } }).then(result => res.send(result))
+  // })
+  server.put('/api/', (req, res, next) => {
+    if (req.session.user && req.cookies.user_sid) {
+      next()
+    } else {
+      res.send('need auth')
+    }
   })
-  server.post('/api/:model', (req,res,))
+
+  server.put('/api/:model', (req, res, next) => {
+    // const { email, name, password } = req.body
+    if (req.session.user && req.cookies.user_sid) {
+      models[req.params.model]
+        .findOrCreate({ where: { ...req.body } })
+        .then(user => res.json(user))
+        .catch(err => res.json(err))
+    } else {
+      res.send('need auth')
+    }
+  })
 }

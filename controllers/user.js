@@ -1,5 +1,20 @@
 import { User } from '../models'
 
+const getAPIKey = (req, res, next) => {
+  const { username, password } = req.body
+
+  User.findOne({ where: { name: username } }).then(function(user) {
+    if (!user) {
+      res.json({ message: 'no valid' })
+    } else if (!user.validPassword(password)) {
+      res.json({ message: 'no valid' })
+    } else {
+      req.session.user = user.dataValues
+      res.redirect('/dashboard')
+    }
+  })
+}
+
 const createUser = (req, res, next) => {
   User.findOrCreate({
     where: {
