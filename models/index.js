@@ -1,5 +1,6 @@
 const sequelize = require('./sequelize-config')
 const User = require('./User')(sequelize)
+const APIKey = require('./APIKey')(sequelize)
 const UserGroup = require('./UserGroup')(sequelize)
 const UserGroupLink = require('./UserGroupLink')(sequelize)
 const Presentation = require('./Presentation')(sequelize)

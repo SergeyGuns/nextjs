@@ -2,15 +2,15 @@ const Sequelize = require('sequelize')
 const bcrypt = require('bcrypt')
 const salt = bcrypt.genSaltSync()
 
-class User extends Sequelize.Model {}
-User.prototype.validPassword = function(password) {
-  return bcrypt.compareSync(password, this.password)
+class APIKey extends Sequelize.Model {}
+APIKey.prototype.validKey = function(key) {
+  return bcrypt.compareSync(key, this.key)
 }
 
 module.exports = sequelize =>
-  User.init(
+  APIKey.init(
     {
-      name: {
+      key: {
         type: Sequelize.STRING,
         unique: true,
         allowNull: false
@@ -20,10 +20,6 @@ module.exports = sequelize =>
         unique: true,
         allowNull: false
       },
-      password: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
       isAdmin: {
         type: Sequelize.BOOLEAN
       }
@@ -31,8 +27,8 @@ module.exports = sequelize =>
     {
       sequelize,
       hooks: {
-        beforeCreate: user => {
-          user.password = bcrypt.hashSync(user.password, salt)
+        beforeCreate: apiKey => {
+          apiKey.key = bcrypt.hashSync(apiKey.email, salt)
         }
       }
     }
