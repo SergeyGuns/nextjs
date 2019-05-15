@@ -61,6 +61,7 @@ sequelize
       UserGroup.findAll().then(groups => Promise.all(groups.map(group => user.addUserGroup(group))))
     )
   )
+  .then(() => APIKey.findOrCreate({ where: { email: 'serg@serg' } }))
   .catch(error => console.log('This error occured', error))
 
 module.exports = {
